@@ -1,25 +1,33 @@
 from scrapy.spider import BaseSpider
-import scrapy.selector.HtmlXPathSelector
-import items
+from scrapy.selector import HtmlXPathSelector
+from crawler.items import ContentItem
+from scrapy import log
+from scrapy.http import Request
+
 class SeekingAlpahSpider(BaseSpider):
     name = "seekingalpha"
     allowed_domains = ["seekingalpha"]
-    article_view = 'http://seekingalpha.com/symbol/%s/in-focus?page=%s'  
     start_urls = [
     ]
+    symbols = ['AAPL']
     max_visit_page = 10
-    def __init__(self, symbols)
-        for symbol in symbols:
-            for i in range(0, max_visit_page):
-                start_urls.append(symbolpage.format(article_view, symbol, i))
+    article_view = "http://seekingalpha.com/symbol/{0}/in-focus?page={1}"
+
+    def __init__(self):
+        for symbol in self.symbols:
+            for i in range(0, self.max_visit_page):
+                self.start_urls.append(self.article_view.format(symbol, i))
              
-    
     def parse(self, response):
         hxs = HtmlXPathSelector(response)
-        articles = hxs.select('//ul/li[@class=quote_list]')
+        articles = hxs.select("//ul[@class='quote_list']/li")
+        log.msg("articles html ele" + str(articles) + '\n', level = log.DEBUG)
         for article in articles:
-            href = article.select('/content/a/href/').extract()
-            yield(href, parse_article_page)
+            log.msg("article content ele" + str(article.select("//div[@class='content']")) + '\n', level = log.DEBUG)
+            href = article.select("//div[@class='content']/a/@href").extract()
+            log.msg("article content href" + str(href) + '\n', level = log.DEBUG)
+            if not href and len(href) > 0:
+                yield Request(href[0], callback = self.parse_article_page)
    
     def extract_content(content):
         rawcontent = []
@@ -37,5 +45,6 @@ class SeekingAlpahSpider(BaseSpider):
         content_item['content'] = extract_content(body)
         content_item['time'] = hxs.select("//div[@class='article_info_pos']").extract()
         content_item['user_name'] = hxs.select("//a[@class='author_info_name']").extract()
-        yield(content_item)
+        yield content_item
+
 
