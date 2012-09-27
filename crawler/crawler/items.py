@@ -5,7 +5,6 @@
 
 from scrapy.item import Item, Field
 
-
 class ContentItem(Item):
     # define the fields for your item here like:
     # name = Field()
@@ -15,8 +14,8 @@ class ContentItem(Item):
     content = Field()
     time = Field()
     type = Field()
-    def __init__(self):
-        self.type = 'content'
+
+
 
 class ReplyItem(Item):  
     id = Field()
@@ -25,8 +24,8 @@ class ReplyItem(Item):
     content = Field()
     time = Field()    
     type = Field()
-    def __init__(self):
-        self.type = 'comment'
+
+
    
 
 

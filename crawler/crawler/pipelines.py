@@ -9,7 +9,7 @@ class SeekingAlpahPipeline(object):
         self.file = open('content.jl', 'wb')
         
     def process_item(self, item, spider):
-        if spider.name in ['']:
+        if spider.name in ['seekingalpha']:
             line = json.dumps(dict(item)) + "\n"      
             self.file.write(line)                      
             return item
