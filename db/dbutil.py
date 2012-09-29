@@ -3,45 +3,39 @@ import MySQLdb
 from lurker.core.configmanager import ConfigManager
 
 class DBUtil:
-    host = ''
-    user = ''
-    passwd = ''
-    db = ''
-
+    @staticmethod
     def get_connection():
-        con = MySQLdb.connect(host=self.host, user=self.user, passwd=self.passwd, 
-                    db=self.db, charset='utf8');
+        dbhost = ConfigManager().get_db_config('host')
+        dbuser = ConfigManager().get_db_config('user')
+        dbname = ConfigManager().get_db_config('db')
+        dbpasswd = ConfigManager().get_db_config('passwd')
+        con = MySQLdb.connect(host=dbhost, user=dbuser, passwd=dbpasswd, 
+                    db=dbname, charset='utf8');
         return con
-             
+    
+    @staticmethod
     def close_connection(con):
         if con:
             con.close()
-       
-
-    def __init__(self):
-        self.host = ConfigManager().get_db_config('host')
-        self.user = ConfigManager().get_db_config('user')
-        self.db = ConfigManager().get_db_config('db')
-        self.passwd = ConfigManager().get_db_config('passwd')
 
     @staticmethod
     def execute(sql):
         con = None
         try:
-           con = get_connection()
+           con = DBUtil.get_connection()
            cursor = con.cursor()
            cursor.execute(sql)
            cursor.close()
         except MySQLdb.Error, e:
             print "Error %d: %s" % (e.args[0], e.args[1])     
         finally:
-            self.close_connection(con)
+            DBUtil.close_connection(con)
 
     @staticmethod
     def query(sql):
          con = None
          try:
-            con = get_connection()                                           
+            con = DBUtil.get_connection()                                           
             cursor = con.cursor()                                       
             cursor.execute(sql)                                              
             rows = cursor.fetchall()
@@ -50,4 +44,4 @@ class DBUtil:
          except MySQLdb.Error, e:
              print "Error %d: %s" % (e.args[0], e.args[1])     
          finally:
-             close_connection(con)
+             DBUtil.close_connection(con)

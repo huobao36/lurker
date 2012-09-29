@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from scrapy.spider import BaseSpider
 from scrapy.selector import HtmlXPathSelector
 from crawler.items import ContentItem
@@ -16,7 +17,6 @@ class SeekingAlpahSpider(BaseSpider):
     domain_url = "http://www.seekingalpha.com"
     minid = -1
     def __init__(self):
-        minid = 
         for symbol in self.symbols:
             for i in range(0, self.max_visit_page):
                 self.start_urls.append(self.article_view.format(symbol, i))
@@ -39,8 +39,8 @@ class SeekingAlpahSpider(BaseSpider):
         content_item = ContentItem()
         content_item['title'] = header
         paras = hxs.select("//div[@id='article_body']/p").extract()
-        log.msg("paras ele: " + str(paras))
-        content_item['content'] = BeautifulSoup('\n'.join(paras), convertEntities=BeautifulSoup.HTML_ENTITIES).findAll(text=True)
+        soup = BeautifulSoup('\n'.join(paras)) 
+        content_item['content'] = ''.join(soup.findAll(text=True)).replace('"','\"')
         content_item['time'] = hxs.select("//div[@class='article_info_pos']/span/text()")[0].extract()
         content_item['user_name'] = hxs.select("//a[@class='author_info_name']/text()")[0].extract()
         content_item['type'] = 'content'
